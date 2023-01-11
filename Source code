@@ -1,0 +1,49 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+#New
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+loaded = pd.read_csv(r'C:\Users\DELL\Downloads\spam_ham_dataset.csv')
+
+#Making data ready
+    #Remove null values
+    loaded = loaded.where((pd.notnull(loaded)), '')
+    print(loaded)
+
+    #Changing output into number
+    loaded.loc(loaded['label']=='spam', 'label') = 0
+    loaded.loc(loaded['label']=='ham', 'label') = 1
+
+#data allocation
+x = loaded['text']
+y = loaded['label']
+
+#Making data ready to be fitted into the model
+    # x data is text, so extracting features from it
+    extraction_formula = TfidfVectorizer(min_df = 1, stop_words = 'english', lowercase='True')
+    X = extraction_formula.fit_transform(x)
+    # y data is in format of 0 and 1 after '''changing input into numbers''', but to ensure these 0's and 1's are i=in int datatype
+    Y = y.astype('int')
+
+#splitting
+train_x, test_x, train_y, test_y = train_test_split(X,Y)
+
+#model making
+reg = LinearSVC()
+reg.fit(train_x, train_y)
+train_acc = accuracy_score(train_y, reg.predict(train_x))
+test_acc = accuracy_score(test_y, reg.predict(test_x))
+
+#prediction
+mail = input()
+mail = str(mail)
+l = [mail]
+Mail = feature_extraction_formula.transform(l)
+pre = reg.predict(Mail)
+if pre == 1:
+  print('Not Spam')
+else:
+  print('Spam')
